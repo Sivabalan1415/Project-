@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karthik Estimation</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            margin: 0;
+        }
+
+        /* Container */
+        .container {
+            padding: 10px;
+        }
+
+        /* Heading */
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 22px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Sticky header */
+        th {
+            position: sticky;
+            top: 0;
+            background: #4CAF50;
+            color: white;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        td {
+            padding: 8px;
+            font-size: 13px;
+            font-weight: bolder;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Material column */
+        td.mat {
+            text-align: left;
+        }
+
+        /* Quantity box */
+        .qty-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Buttons (big for touch) */
+        button {
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+        }
+
+        /* Plus */
+        .plus {
+            background: #28a745;
+            color: white;
+        }
+
+        /* Minus */
+        .minus {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Quantity */
+        .qty {
+            font-size: 16px;
+            font-weight: bold;
+            min-width: 30px;
+        }
+
+        /* Show button */
+        #showBtn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            font-size: 16px;
+            background: #ff9800;
+            color: white;
+            border-radius: 8px;
+        }
+
+        /* Result table heading gap */
+        #resultTable {
+            margin-top: 15px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Karthik’s Estimation</h1>
+
+        <table>
+            <tr>
+                <th>S.NO</th>
+                <th>MATERIAL</th>
+                <th>QTY</th>
+            </tr>
+            <tbody id="tableBody"></tbody>
+        </table>
+
+        <button id="showBtn" onclick="showSelected()">Show Selected Items</button>
+
+        <table id="resultTable">
+            <tr>
+                <th>S.NO</th>
+                <th>MATERIAL</th>
+                <th>QTY</th>
+            </tr>
+            <tbody id="resultBody"></tbody>
+        </table>
+
+    </div>
+
+    <script>
+
+        const materials = [
+            "1\" cpvc pipe", "1\" cpvc elbow", "1\" cpvc tee", "1\" cpvc shoo",
+            "1×½ cpvc brass elbow", "1×½ cpvc brass tee", "½ end plug",
+            "1\" cpvc end cap", "1\" cpvc coupler", "cpvc solvent 118 ml",
+            "2½ pvc pipe", "2½ pvc elbow", "pvc solvent 118 ml", "2½ pvc shoo",
+            "4×2½ multi drop", "1½ pvc pipe", "1½ pvc elbow", "1½ long bend",
+            "1½ pvc shoo", "1½ pvc end cap", "4\" pvc pipe", "4\" pvc elbow",
+            "4\" pvc shoo", "1\" hacksaw blade", "5\" steel cutter",
+            "5\" wall cutter (speed)", "1½ steel nail (2kg)", "¾ teflon tape",
+            "1¼×1 cpvc push", "1¼×1 cpvc reducer", "1¼ cpvc pipe",
+            "1¼ cpvc elbow", "1¼ cpvc tee", "1¼ cpvc shoe",
+            "1¼ cpvc coupler", "1½ cpvc coupler", "1½×1 cpvc push",
+            "1½ cpvc tee", "1½ cpvc elbow", "1½ cpvc union",
+            "1½ cpvc shoe", "Thread & chellack (2 set)",
+            "1½ cpvc ball valve", "1½ cpvc pipe"
+        ];
+
+        const tableBody = document.getElementById("tableBody");
+
+        materials.forEach((item, index) => {
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+        <td>${index + 1}</td>
+        <td class="mat">${item}</td>
+        <td>
+            <div class="qty-box">
+                <button class="minus" onclick="decrease(this)">−</button>
+                <span class="qty">0</span>
+                <button class="plus" onclick="increase(this)">+</button>
+            </div>
+        </td>
+    `;
+
+            tableBody.appendChild(row);
+        });
+
+        function increase(btn) {
+            let qty = btn.parentElement.querySelector(".qty");
+            qty.innerText = parseInt(qty.innerText) + 1;
+        }
+
+        function decrease(btn) {
+            let qty = btn.parentElement.querySelector(".qty");
+            let value = parseInt(qty.innerText);
+            if (value > 0) qty.innerText = value - 1;
+        }
+
+        function showSelected() {
+            const rows = document.querySelectorAll("#tableBody tr");
+            const resultBody = document.getElementById("resultBody");
+
+            resultBody.innerHTML = "";
+            let count = 1;
+
+            rows.forEach(row => {
+                let qty = row.querySelector(".qty").innerText;
+                let material = row.querySelector(".mat").innerText;
+
+                if (parseInt(qty) > 0) {
+                    const newRow = document.createElement("tr");
+
+                    newRow.innerHTML = `
+                <td>${count++}</td>
+                <td>${material}</td>
+                <td>${qty}</td>
+            `;
+
+                    resultBody.appendChild(newRow);
+                }
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>
